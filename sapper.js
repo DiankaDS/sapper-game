@@ -25,8 +25,14 @@ class Sapper {
         this.isGame = true;
         this.newGameButton = this.setButton(this.newGameButton, 66);
         this.menuButton = this.setButton(this.menuButton, 20);
+
+        this.image = new Image();
+        this.image.src = './assets/s-point.png';
+
         this.setListeners();
-        this.startGame(this.context);
+        this.image.onload = () => {
+            this.startGame(this.context);
+        };
     }
 
     setListeners() {
@@ -119,6 +125,82 @@ class Sapper {
         }
     }
 
+    startGame(x) {
+        this.clearRect(x);
+        this.isGame = true;
+
+        x.strokeRect(0, 0, this.size, this.size);
+
+        let field = this.putRandomBombs(this.createMatrix());
+        field = this.putNumbers(field);
+
+        this.drawGameBoard(x);
+        this.fillGameFooter(x);
+
+        // === for testing
+        // x.fillStyle = 'red';
+        // for (let t1 = 0; t1 < this.rows; t1 ++) {
+        //     for (let t2 = 0; t2 < this.rows; t2 ++) {
+        //         x.fillText(field[t2][t1], t2 * 30 + 10, t1 * 30 + 20);
+        //     }
+        // }
+        // === for testing
+
+    }
+
+    createMatrix() {
+        let field = [];
+        for (let i = 0; i < this.rows; i++) {
+            field[i] = [];
+            for (let j = 0; j < this.rows; j++) {
+                field[i][j] = 0;
+            }
+        }
+        return field;
+    }
+
+    putRandomBombs(field) {
+        for (let b = 0; b < this.bombs; b++) {
+
+            let i = Math.floor(Math.random() * this.rows);
+            let j = Math.floor(Math.random() * this.rows);
+
+            if (field[i][j] == 'x') {
+                b--;
+            } else {
+                field[i][j] = 'x';
+            }
+        }
+        return field;
+    }
+
+    putNumbers(field) {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.rows; j++) {
+                if (field[i][j] != 'x') {
+                    continue;
+                }
+                for (let i1 = Math.max(0, i - 1); i1 <= Math.min(i + 1, this.rows - 1); i1++) {
+                    for (let j1 = Math.max(0, j - 1); j1 <= Math.min(j + 1, this.rows - 1); j1++) {
+                        if (field[i1][j1] != 'x') {
+                            field[i1][j1] = field[i1][j1] + 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        return field;
+    }
+
+    drawGameBoard(x) {
+        for (let t1 = 0; t1 < this.size; t1 += this.sizeElem) {
+            for (let t2 = 0; t2 < this.size; t2 += this.sizeElem) {
+                x.drawImage(this.image, t1, t2, this.sizeElem, this.sizeElem);
+            }
+        }
+    }
+
     fillGameFooter(x) {
         x.save();
 
@@ -150,17 +232,6 @@ class Sapper {
 
         x.restore();
     }
-
-    startGame(x) {
-        this.clearRect(x);
-        this.isGame = true;
-
-        x.strokeRect(0, 0, this.size, this.size);
-
-        this.fillGameFooter(x);
-
-    }
-
 }
 
 const sapper = new Sapper(16, 40);
