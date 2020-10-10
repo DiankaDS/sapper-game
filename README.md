@@ -1,5 +1,3 @@
-Simple reproduction steps:
+Just click on this link and enjoy =)
 
-1. Clone this project
-2. Open the index.html file in your browser
-3. Enjoy the game
+https://diankads.github.io/sapper-game/
