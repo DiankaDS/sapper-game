@@ -28,6 +28,8 @@ class Sapper {
         this.field = [];
         this.flags = [];
         this.openElems = [];
+        this.seconds = 0;
+        this.interval = false;
 
         this.newGameButton = this.setButton(this.newGameButton, 66);
         this.menuButton = this.setButton(this.menuButton, 20);
@@ -88,6 +90,8 @@ class Sapper {
 
     showHowToPlay() {
         this.clearRect();
+        clearInterval(this.interval);
+        this.interval = false;
         this.isGame = false;
         let size = 450;
         let width = this.canvas.width;
@@ -148,8 +152,10 @@ class Sapper {
     startGame() {
         this.flags = [];
         this.openElems = [];
-
+        this.seconds = 0;
         this.clearRect();
+        clearInterval(this.interval);
+        this.interval = false;
         this.context.strokeRect(0, 0, this.size, this.size);
 
         let field = this.putNumbers(this.putRandomBombs(this.createMatrix()));
@@ -239,7 +245,7 @@ class Sapper {
         this.context.strokeRect(110, this.size + 20, 95, 40);
         this.context.strokeText('Time', 125, this.size + 50);
         this.context.strokeRect(110, this.size + 62, 95, 45);
-        this.context.strokeText('000', 130, this.size + 90);
+        this.drawTime('000');
 
         this.context.font = this.font.small;
         this.context.strokeStyle = 'lightgrey';
@@ -296,6 +302,10 @@ class Sapper {
             this.flags.indexOf(xElem + ' ' + yElem) == -1 &&
             this.openElems.indexOf(xElem + ' ' + yElem) == -1
         ) {
+            if (this.seconds == 0 && !this.interval) {
+                this.interval = setInterval(this.timer.bind(this), 1000);
+            }
+
             let point = this.field[xElem][yElem];
 
             if (point == 'x') {
@@ -311,14 +321,7 @@ class Sapper {
                 this.openNumber(xElem, yElem);
             }
 
-            if (
-                this.isGame &&
-                this.openElems.length >= this.rows * this.rows - this.bombs
-            ) {
-                this.isGame = false;
-                this.putLastFlags();
-                this.drawWin();
-            }
+            this.tryWin();
         }
 
     }
@@ -381,6 +384,18 @@ class Sapper {
         }
     }
 
+    tryWin() {
+        if (
+            this.isGame &&
+            this.openElems.length >= this.rows * this.rows - this.bombs
+        ) {
+            clearInterval(this.interval);
+            this.isGame = false;
+            this.putLastFlags();
+            this.drawWin();
+        }
+    }
+
     drawWin() {
         this.context.save();
         this.context.textAlign = 'center';
@@ -394,7 +409,7 @@ class Sapper {
         this.context.strokeText('You win!', this.canvas.width / 2, this.canvas.height / 4);
         this.context.restore();
 
-        this.context.fillStyle = 'white';
+        this.context.fillStyle = this.color.white;
         this.context.fillRect(12, this.size + 64, 92, 42);
         this.context.font = this.font.medium;
         this.context.fillStyle = this.color.blue;
@@ -414,6 +429,33 @@ class Sapper {
         this.context.lineWidth = 2;
         this.context.strokeText('You lose!', this.canvas.width / 2, this.canvas.height / 4);
         this.context.restore();
+    }
+
+    drawTime(sec) {
+        this.context.save();
+        this.context.font = this.font.medium;
+        this.context.fillStyle = this.color.white;
+        this.context.fillRect(112, this.size + 64, 92, 42);
+        this.context.strokeText(sec, 130, this.size + 90);
+        this.context.restore();
+    }
+
+    timer() {
+        console.log(this.interval);
+
+        let sec;
+        if (this.isGame) {
+            if (++this.seconds < 10) {
+                sec = '00' + this.seconds;
+            } else if (this.seconds < 100) {
+                sec = '0' + this.seconds;
+            } else {
+                sec = this.seconds;
+            }
+            this.drawTime(sec);
+        } else {
+            clearInterval(this.interval);
+        }
     }
 }
 
