@@ -363,7 +363,7 @@ class Sapper {
         this.context.fillRect(i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
         this.context.fillStyle = this.color.blue;
         this.context.font = this.font.small;
-        this.context.fillText(point, i * this.sizeElem + 10, j * this.sizeElem + 20);
+        this.context.fillText(point == '0' ? '' : point , i * this.sizeElem + 10, j * this.sizeElem + 20);
 
         this.openElems.push(i + ' ' + j);
     }
@@ -371,16 +371,24 @@ class Sapper {
     openEmpty(i, j) {
         if (
             this.field[i] &&
-            this.field[i][j] == '0' &&
+            this.field[i][j] !== undefined &&
             this.flags.indexOf(i + ' ' + j) == -1 &&
             this.openElems.indexOf(i + ' ' + j) == -1
         ) {
             this.openNumber(i, j);
 
-            this.openEmpty(i-1, j);
-            this.openEmpty(i+1, j);
-            this.openEmpty(i, j-1);
-            this.openEmpty(i, j+1);
+            if (this.field[i][j] == '0') {
+                this.openEmpty(i-1, j);
+                this.openEmpty(i-1, j-1);
+                this.openEmpty(i-1, j+1);
+
+                this.openEmpty(i, j-1);
+                this.openEmpty(i, j+1);
+
+                this.openEmpty(i+1, j);
+                this.openEmpty(i+1, j-1);
+                this.openEmpty(i+1, j+1);
+            }
         }
     }
 
