@@ -82,12 +82,12 @@ class Sapper {
         return {x:x, y:y};
     }
 
-    clearRect(x) {
-        x.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    clearRect() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    showHowToPlay(x) {
-        this.clearRect(x);
+    showHowToPlay() {
+        this.clearRect();
         this.isGame = false;
         let size = 450;
         let width = this.canvas.width;
@@ -108,63 +108,63 @@ class Sapper {
             'around the number',
         ];
     
-        x.save();
+        this.context.save();
 
-        x.lineWidth = 2;
-        x.textAlign = 'center';
-        x.font = this.font.medium;
-        x.strokeStyle = this.color.lightgreen;
-        x.strokeText('How to play', width / 3, height / 10);
-        x.strokeStyle = this.color.orange;
-        x.strokeText('Controls', width / 3,  height * 5 / 10);
+        this.context.lineWidth = 2;
+        this.context.textAlign = 'center';
+        this.context.font = this.font.medium;
+        this.context.strokeStyle = this.color.lightgreen;
+        this.context.strokeText('How to play', width / 3, height / 10);
+        this.context.strokeStyle = this.color.orange;
+        this.context.strokeText('Controls', width / 3,  height * 5 / 10);
     
-        x.textAlign = 'left';
-        x.font = this.font.header;
+        this.context.textAlign = 'left';
+        this.context.font = this.font.header;
 
-        this.fillHowToText(x, mainText, height, 1, this.color.green);
-        this.fillHowToText(x, controlText, height, 5, this.color.orange);
+        this.fillHowToText(mainText, height, 1, this.color.green);
+        this.fillHowToText(controlText, height, 5, this.color.orange);
     
-        x.strokeStyle = 'lightgrey';
-        x.fillStyle = this.color.blue;
-        x.font = this.font.small;
+        this.context.strokeStyle = 'lightgrey';
+        this.context.fillStyle = this.color.blue;
+        this.context.font = this.font.small;
     
-        x.fill(this.newGameButton);
-        x.stroke(this.newGameButton);
+        this.context.fill(this.newGameButton);
+        this.context.stroke(this.newGameButton);
     
-        x.fillStyle = this.color.white;
-        x.fillText('New game', 220, size + 120);
+        this.context.fillStyle = this.color.white;
+        this.context.fillText('New game', 220, size + 120);
     
-        x.restore();
+        this.context.restore();
     }
 
-    fillHowToText(x, text, height, heightIndex, color) {
-        x.fillStyle = color;
+    fillHowToText(text, height, heightIndex, color) {
+        this.context.fillStyle = color;
 
         for (let i in text) {
-            x.fillText(text[i], 0, height * (heightIndex += 0.5) / 10);
+            this.context.fillText(text[i], 0, height * (heightIndex += 0.5) / 10);
         }
     }
 
-    startGame(x) {
+    startGame() {
         this.flags = [];
         this.openElems = [];
 
-        this.clearRect(x);
-        x.strokeRect(0, 0, this.size, this.size);
+        this.clearRect();
+        this.context.strokeRect(0, 0, this.size, this.size);
 
         let field = this.putNumbers(this.putRandomBombs(this.createMatrix()));
 
-        this.drawGameBoard(x);
-        this.fillGameFooter(x);
+        this.drawGameBoard();
+        this.fillGameFooter();
 
         this.field = field;
         this.isGame = true;
 
         // === for testing
-        // x.fillStyle = 'red';
+        // this.context.fillStyle = 'red';
         // for (let t1 = 0; t1 < this.rows; t1 ++) {
         //     for (let t2 = 0; t2 < this.rows; t2 ++) {
-        //         x.fillText(this.field[t2][t1], t2 * 30 + 10, t1 * 30 + 20);
+        //         this.context.fillText(this.field[t2][t1], t2 * 30 + 10, t1 * 30 + 20);
         //     }
         // }
         // === for testing
@@ -216,44 +216,44 @@ class Sapper {
         return field;
     }
 
-    drawGameBoard(x) {
+    drawGameBoard() {
         for (let t1 = 0; t1 < this.size; t1 += this.sizeElem) {
             for (let t2 = 0; t2 < this.size; t2 += this.sizeElem) {
-                x.drawImage(this.image, t1, t2, this.sizeElem, this.sizeElem);
+                this.context.drawImage(this.image, t1, t2, this.sizeElem, this.sizeElem);
             }
         }
     }
 
-    fillGameFooter(x) {
-        x.save();
+    fillGameFooter() {
+        this.context.save();
 
-        x.font = this.font.medium;
-        x.fillStyle = this.color.blue;
-        x.textAlign = 'left';
+        this.context.font = this.font.medium;
+        this.context.fillStyle = this.color.blue;
+        this.context.textAlign = 'left';
 
-        x.strokeRect(10, this.size + 20, 95, 40);
-        x.strokeText('Bombs', 15, this.size + 50);
-        x.strokeRect(10, this.size + 62, 95, 45);
-        x.strokeText('x' + this.bombs, 30, this.size + 90);
+        this.context.strokeRect(10, this.size + 20, 95, 40);
+        this.context.strokeText('Bombs', 15, this.size + 50);
+        this.context.strokeRect(10, this.size + 62, 95, 45);
+        this.context.strokeText('x' + this.bombs, 30, this.size + 90);
 
-        x.strokeRect(110, this.size + 20, 95, 40);
-        x.strokeText('Time', 125, this.size + 50);
-        x.strokeRect(110, this.size + 62, 95, 45);
-        x.strokeText('000', 130, this.size + 90);
+        this.context.strokeRect(110, this.size + 20, 95, 40);
+        this.context.strokeText('Time', 125, this.size + 50);
+        this.context.strokeRect(110, this.size + 62, 95, 45);
+        this.context.strokeText('000', 130, this.size + 90);
 
-        x.font = this.font.small;
-        x.strokeStyle = 'lightgrey';
+        this.context.font = this.font.small;
+        this.context.strokeStyle = 'lightgrey';
 
-        x.fill(this.menuButton);
-        x.stroke(this.menuButton);
-        x.fill(this.newGameButton);
-        x.stroke(this.newGameButton);
+        this.context.fill(this.menuButton);
+        this.context.stroke(this.menuButton);
+        this.context.fill(this.newGameButton);
+        this.context.stroke(this.newGameButton);
 
-        x.fillStyle = this.color.white;
-        x.fillText('New game', 220, this.size + 90);
-        x.fillText('How to play', 218, this.size + 45);
+        this.context.fillStyle = this.color.white;
+        this.context.fillText('New game', 220, this.size + 90);
+        this.context.fillText('How to play', 218, this.size + 45);
 
-        x.restore();
+        this.context.restore();
     }
 
     putOrRemoveFlag(layerX, layerY) {
@@ -308,13 +308,7 @@ class Sapper {
                 this.openEmpty(xElem, yElem);
             } 
             else {
-                this.context.fillStyle = 'lightgrey';
-                this.context.fillRect(xElem * this.sizeElem, yElem * this.sizeElem, this.sizeElem, this.sizeElem);
-                this.context.fillStyle = '#3c6b6d';
-                this.context.font = '15px Verdana';
-                this.context.fillText(point, xElem * this.sizeElem + 10, yElem * this.sizeElem + 20);
-
-                this.openElems.push(xElem + ' ' + yElem);
+                this.openNumber(xElem, yElem);
             }
 
             if (
@@ -359,8 +353,32 @@ class Sapper {
         }
     }
 
-    openEmpty(xElem, yElem) {
-        console.log('empty');
+    openNumber(i, j) {
+        let point = this.field[i][j];
+
+        this.context.fillStyle = 'lightgrey';
+        this.context.fillRect(i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
+        this.context.fillStyle = this.color.blue;
+        this.context.font = this.font.small;
+        this.context.fillText(point, i * this.sizeElem + 10, j * this.sizeElem + 20);
+
+        this.openElems.push(i + ' ' + j);
+    }
+
+    openEmpty(i, j) {
+        if (
+            this.field[i] &&
+            this.field[i][j] == '0' &&
+            this.flags.indexOf(i + ' ' + j) == -1 &&
+            this.openElems.indexOf(i + ' ' + j) == -1
+        ) {
+            this.openNumber(i, j);
+
+            this.openEmpty(i-1, j);
+            this.openEmpty(i+1, j);
+            this.openEmpty(i, j-1);
+            this.openEmpty(i, j+1);
+        }
     }
 
     drawWin() {
@@ -399,4 +417,4 @@ class Sapper {
     }
 }
 
-const sapper = new Sapper(16, 255);
+const sapper = new Sapper(16, 40);
