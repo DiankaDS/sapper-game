@@ -59,6 +59,7 @@ class Sapper {
         document.addEventListener('click', e => this.getButtonAction(e), false);
         this.canvas.addEventListener('click', e => this.openCell(e.layerX, e.layerY));
         this.canvas.oncontextmenu = e => this.putOrRemoveFlag(e.layerX, e.layerY);
+        this.canvas.addEventListener('dblclick', e => this.openIfFlagsSet(e.layerX, e.layerY));
     }
 
     setButton(button, i) {
@@ -144,8 +145,8 @@ class Sapper {
     fillHowToText(text, height, heightIndex, color) {
         this.context.fillStyle = color;
 
-        for (let i in text) {
-            this.context.fillText(text[i], 0, height * (heightIndex += 0.5) / 10);
+        for (let i of text) {
+            this.context.fillText(i, 0, height * (heightIndex += 0.5) / 10);
         }
     }
 
@@ -392,6 +393,33 @@ class Sapper {
         }
     }
 
+    openIfFlagsSet(layerX, layerY) {
+        let i = Math.floor(layerX / this.sizeElem);
+        let j = Math.floor(layerY / this.sizeElem);
+        if (this.isGame && this.openElems.indexOf(i + ' ' + j)) {
+            let localFlags = 0;
+            let localElems = [];
+
+            for (let i1 = i-1; i1 <= i + 1; i1++) {
+                for (let j1 = j-1; j1 <= j + 1; j1++) {
+                    if (this.field[i1] && this.field[i1][j1] !== undefined) {
+                        if (this.flags.indexOf(i1 + ' ' + j1) == -1) {
+                            localElems.push({x: i1, y: j1});
+                        } else {
+                            localFlags++;
+                        }
+                    }
+                }
+            }
+
+            if (localFlags == this.field[i][j]) {
+                for (let point of localElems) {
+                    this.openCell(point.x * this.sizeElem, point.y * this.sizeElem);
+                }
+            }
+        }
+    }
+
     tryWin() {
         if (
             this.isGame &&
@@ -449,8 +477,6 @@ class Sapper {
     }
 
     timer() {
-        console.log(this.interval);
-
         let sec;
         if (this.isGame) {
             if (++this.seconds < 10) {
