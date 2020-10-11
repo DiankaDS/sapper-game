@@ -30,8 +30,8 @@ class Sapper {
         this.canvas = document.getElementById('draw');
         this.context = this.canvas.getContext('2d');
         this.isGame = true;
-        this.openElems = rows * rows - bombs;
-        this.field = [];
+        this.elemsToOpen = rows * rows - bombs;
+        this.board = [];
 
         this.seconds = 0;
         this.interval = false;
@@ -162,21 +162,21 @@ class Sapper {
         this.interval = false;
         this.context.strokeRect(0, 0, this.size, this.size);
         this.bombs = 40;
-        this.openElems = this.rows * this.rows - this.bombs;
+        this.elemsToOpen = this.rows * this.rows - this.bombs;
 
-        let field = this.putNumbers(this.putRandomBombs(this.createMatrix()));
+        let board = this.putNumbers(this.putRandomBombs(this.createMatrix()));
 
         this.drawGameBoard();
         this.fillGameFooter();
 
-        this.field = field;
+        this.board = board;
         this.isGame = true;
 
         // === for testing
         // this.context.fillStyle = 'red';
         // for (let t1 = 0; t1 < this.rows; t1 ++) {
         //     for (let t2 = 0; t2 < this.rows; t2 ++) {
-        //         this.context.fillText(this.field[t2][t1].number, t2 * 30 + 10, t1 * 30 + 20);
+        //         this.context.fillText(this.board[t2][t1].number, t2 * 30 + 10, t1 * 30 + 20);
         //     }
         // }
         // === for testing
@@ -184,47 +184,47 @@ class Sapper {
     }
 
     createMatrix() {
-        let field = [];
+        let board = [];
         for (let i = 0; i < this.rows; i++) {
-            field[i] = [];
+            board[i] = [];
             for (let j = 0; j < this.rows; j++) {
-                field[i][j] = {number: 0, status: this.status.hide};
+                board[i][j] = {number: 0, status: this.status.hide};
             }
         }
-        return field;
+        return board;
     }
 
-    putRandomBombs(field) {
+    putRandomBombs(board) {
         for (let b = 0; b < this.bombs; b++) {
             let i = Math.floor(Math.random() * this.rows);
             let j = Math.floor(Math.random() * this.rows);
 
-            if (field[i][j].number == 'x') {
+            if (board[i][j].number == 'x') {
                 b--;
             } else {
-                field[i][j].number = 'x';
+                board[i][j].number = 'x';
             }
         }
-        return field;
+        return board;
     }
 
-    putNumbers(field) {
+    putNumbers(board) {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.rows; j++) {
-                if (field[i][j].number != 'x') {
+                if (board[i][j].number != 'x') {
                     continue;
                 }
                 for (let i1 = Math.max(0, i - 1); i1 <= Math.min(i + 1, this.rows - 1); i1++) {
                     for (let j1 = Math.max(0, j - 1); j1 <= Math.min(j + 1, this.rows - 1); j1++) {
-                        if (field[i1][j1].number != 'x') {
-                            field[i1][j1].number = field[i1][j1].number + 1;
+                        if (board[i1][j1].number != 'x') {
+                            board[i1][j1].number = board[i1][j1].number + 1;
                         }
                     }
                 }
             }
         }
 
-        return field;
+        return board;
     }
 
     drawGameBoard() {
@@ -276,13 +276,13 @@ class Sapper {
             i < this.rows &&
             j < this.rows
         ) {
-            if (this.field[i][j].status == this.status.flag) {
+            if (this.board[i][j].status == this.status.flag) {
                 this.context.drawImage(this.image, i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
-                this.field[i][j].status = this.status.hide;
+                this.board[i][j].status = this.status.hide;
                 this.bombs++;
-            } else if (this.field[i][j].status == this.status.hide) {
+            } else if (this.board[i][j].status == this.status.hide) {
                 this.context.drawImage(this.flag, i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
-                this.field[i][j].status = this.status.flag;
+                this.board[i][j].status = this.status.flag;
                 this.bombs--;
             }
 
@@ -304,13 +304,13 @@ class Sapper {
             this.isGame &&
             i < this.rows &&
             j < this.rows &&
-            this.field[i][j].status == this.status.hide
+            this.board[i][j].status == this.status.hide
         ) {
             if (this.seconds == 0 && !this.interval) {
                 this.interval = setInterval(this.timer.bind(this), 1000);
             }
 
-            let point = this.field[i][j];
+            let point = this.board[i][j];
 
             if (point.number == 'x') {
                 this.isGame = false;
@@ -333,12 +333,12 @@ class Sapper {
     putAllBombs() {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.rows; j++) {
-                if (this.field[i][j].number == 'x') {
-                    if (this.field[i][j].status == this.status.hide) {
+                if (this.board[i][j].number == 'x') {
+                    if (this.board[i][j].status == this.status.hide) {
                         this.context.drawImage(this.bomb0, i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
                     }
                 }
-                else if (this.field[i][j].status == this.status.flag) {
+                else if (this.board[i][j].status == this.status.flag) {
                     this.context.drawImage(this.bomb2, i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
                 }
             }
@@ -348,7 +348,7 @@ class Sapper {
     putLastFlags() {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.rows; j++) {
-                if (this.field[i][j].number == 'x' && this.field[i][j].status == this.status.hide) {
+                if (this.board[i][j].number == 'x' && this.board[i][j].status == this.status.hide) {
                     this.context.drawImage(this.flag, i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
                 }
             }
@@ -356,9 +356,9 @@ class Sapper {
     }
 
     openNumber(i, j) {
-        this.field[i][j].status = this.status.open;
-        this.openElems--;
-        let num = this.field[i][j].number;
+        this.board[i][j].status = this.status.open;
+        this.elemsToOpen--;
+        let num = this.board[i][j].number;
 
         this.context.fillStyle = 'lightgrey';
         this.context.fillRect(i * this.sizeElem, j * this.sizeElem, this.sizeElem, this.sizeElem);
@@ -369,13 +369,13 @@ class Sapper {
 
     openEmpty(i, j) {
         if (
-            this.field[i] &&
-            this.field[i][j] !== undefined &&
-            this.field[i][j].status == this.status.hide
+            this.board[i] &&
+            this.board[i][j] !== undefined &&
+            this.board[i][j].status == this.status.hide
         ) {
             this.openNumber(i, j);
 
-            if (this.field[i][j].number == '0') {
+            if (this.board[i][j].number == '0') {
                 this.openEmpty(i-1, j);
                 this.openEmpty(i-1, j-1);
                 this.openEmpty(i-1, j+1);
@@ -393,23 +393,23 @@ class Sapper {
     openIfFlagsSet(layerX, layerY) {
         let i = Math.floor(layerX / this.sizeElem);
         let j = Math.floor(layerY / this.sizeElem);
-        if (this.isGame && this.field[i][j].status == this.status.open) {
+        if (this.isGame && this.board[i][j].status == this.status.open) {
             let localFlags = 0;
             let localElems = [];
 
             for (let i1 = i-1; i1 <= i + 1; i1++) {
                 for (let j1 = j-1; j1 <= j + 1; j1++) {
-                    if (this.field[i1] && this.field[i1][j1] !== undefined) {
-                        if (this.field[i1][j1].status == this.status.flag) {
+                    if (this.board[i1] && this.board[i1][j1] !== undefined) {
+                        if (this.board[i1][j1].status == this.status.flag) {
                             localFlags++;
-                        } else if (this.field[i1][j1].status == this.status.hide) {
+                        } else if (this.board[i1][j1].status == this.status.hide) {
                             localElems.push({x: i1, y: j1});
                         }
                     }
                 }
             }
 
-            if (localFlags == this.field[i][j].number) {
+            if (localFlags == this.board[i][j].number) {
                 for (let point of localElems) {
                     this.openCell(point.x * this.sizeElem, point.y * this.sizeElem);
                 }
@@ -418,7 +418,7 @@ class Sapper {
     }
 
     tryWin() {
-        if (this.isGame && this.openElems == 0) {
+        if (this.isGame && this.elemsToOpen == 0) {
             clearInterval(this.interval);
             this.isGame = false;
             this.putLastFlags();
