@@ -166,19 +166,19 @@ class Sapper {
 
         let field = this.putNumbers(this.putRandomBombs(this.createMatrix()));
 
-        // this.drawGameBoard();
+        this.drawGameBoard();
         this.fillGameFooter();
 
         this.field = field;
         this.isGame = true;
 
         // === for testing
-        this.context.fillStyle = 'red';
-        for (let t1 = 0; t1 < this.rows; t1 ++) {
-            for (let t2 = 0; t2 < this.rows; t2 ++) {
-                this.context.fillText(this.field[t2][t1].number, t2 * 30 + 10, t1 * 30 + 20);
-            }
-        }
+        // this.context.fillStyle = 'red';
+        // for (let t1 = 0; t1 < this.rows; t1 ++) {
+        //     for (let t2 = 0; t2 < this.rows; t2 ++) {
+        //         this.context.fillText(this.field[t2][t1].number, t2 * 30 + 10, t1 * 30 + 20);
+        //     }
+        // }
         // === for testing
 
     }
