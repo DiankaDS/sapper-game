@@ -1,28 +1,26 @@
 class Sapper {
-    newGameButton;
-    menuButton;
-    font = {
-        small: '15px Verdana',
-        header: '18px Verdana',
-        medium: '25px Verdana',
-        large: '80px Verdana',
-    };
-    color = {
-        lightgreen: '#05d00f',
-        green: '#08912d',
-        orange: '#ee8149',
-        blue: '#3c6b6d',
-        white: '#ffffff',
-        winShadow: '#0ae80d',
-        loseShadow: '#F00',
-    };
-    status = {
-        hide: 0,
-        open: 1,
-        flag: 2,
-    }
-
     constructor(rows, bombs) {
+        this.font = {
+            small: '15px Verdana',
+            header: '18px Verdana',
+            medium: '25px Verdana',
+            large: '80px Verdana',
+        };
+        this.color = {
+            lightgreen: '#05d00f',
+            green: '#08912d',
+            orange: '#ee8149',
+            blue: '#3c6b6d',
+            white: '#ffffff',
+            winShadow: '#0ae80d',
+            loseShadow: '#F00',
+        };
+        this.status = {
+            hide: 0,
+            open: 1,
+            flag: 2,
+        }
+
         this.rows = rows;
         this.bombs = bombs;
         this.sizeElem = 30;
